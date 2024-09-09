@@ -14,13 +14,13 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 
-import { UserSessionData, ControlVariablesLevelEnum, WorkflowTypeEnum } from '@novu/shared';
+import { ControlVariablesLevelEnum, UserSessionData, WorkflowTypeEnum } from '@novu/shared';
 import { AnalyticsService, ExternalApiAccessible, UserAuthGuard, UserSession } from '@novu/application-generic';
-import { EnvironmentRepository, NotificationTemplateRepository, ControlVariablesRepository } from '@novu/dal';
+import { EnvironmentRepository, NotificationTemplateRepository } from '@novu/dal';
 
 import { ApiExcludeController } from '@nestjs/swagger';
 
-import { StoreControlVariables, StoreControlVariablesCommand } from './usecases/store-control-variables';
+import { StoreControlVariablesCommand, StoreControlVariablesUseCase } from './usecases/store-control-variables';
 import { PreviewStep, PreviewStepCommand } from './usecases/preview-step';
 import { SyncCommand } from './usecases/sync';
 import { Sync } from './usecases/sync/sync.usecase';
@@ -30,6 +30,7 @@ import { GetBridgeStatus } from './usecases/get-bridge-status/get-bridge-status.
 import { GetBridgeStatusCommand } from './usecases/get-bridge-status/get-bridge-status.command';
 import { CreateBridgeRequestDto } from './dtos/create-bridge-request.dto';
 import { CreateBridgeResponseDto } from './dtos/create-bridge-response.dto';
+import { ControlValuesRepository } from '@novu/dal/src';
 
 @Controller('/bridge')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -40,8 +41,8 @@ export class BridgeController {
     private validateBridgeUrlUsecase: GetBridgeStatus,
     private environmentRepository: EnvironmentRepository,
     private notificationTemplateRepository: NotificationTemplateRepository,
-    private controlVariablesRepository: ControlVariablesRepository,
-    private storeControlVariables: StoreControlVariables,
+    private controlValuesRepository: ControlValuesRepository,
+    private storeControlVariablesUseCase: StoreControlVariablesUseCase,
     private previewStep: PreviewStep,
     private analyticsService: AnalyticsService
   ) {}
@@ -175,7 +176,7 @@ export class BridgeController {
       throw new NotFoundException('Workflow not found');
     }
 
-    const result = await this.controlVariablesRepository.findOne({
+    const result = await this.controlValuesRepository.findOne({
       _environmentId: user.environmentId,
       _organizationId: user.organizationId,
       _workflowId: workflowExist._id,
@@ -195,7 +196,7 @@ export class BridgeController {
     @UserSession() user: UserSessionData,
     @Body() body: any
   ) {
-    return this.storeControlVariables.execute(
+    return this.storeControlVariablesUseCase.execute(
       StoreControlVariablesCommand.create({
         stepId,
         workflowId,

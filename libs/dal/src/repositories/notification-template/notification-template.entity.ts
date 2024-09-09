@@ -1,21 +1,22 @@
 import { Types } from 'mongoose';
 import {
-  FilterParts,
   BuilderFieldType,
   BuilderGroupValues,
-  IPreferenceChannels,
-  IWorkflowStepMetadata,
-  NotificationTemplateCustomData,
-  IStepVariant,
+  ControlsDto,
+  FilterParts,
   IMessageFilter,
-  INotificationTrigger,
-  TriggerTypeEnum,
-  INotificationTriggerVariable,
-  ITriggerReservedVariable,
+  IMessageTemplate,
   INotificationTemplate,
   INotificationTemplateStep,
-  IMessageTemplate,
-  ControlsDto,
+  INotificationTrigger,
+  INotificationTriggerVariable,
+  IPreferenceChannels,
+  IStepVariant,
+  ITriggerReservedVariable,
+  IWorkflowStepMetadata,
+  NotificationTemplateCustomData,
+  TriggerTypeEnum,
+  WorkflowOriginEnum,
   WorkflowTypeEnum,
 } from '@novu/shared';
 
@@ -75,6 +76,15 @@ export class NotificationTemplateEntity implements INotificationTemplate {
   data?: NotificationTemplateCustomData;
 
   type?: WorkflowTypeEnum;
+  /**
+   * Enum to define the origin of the workflow.
+   *
+   * The `WorkflowOriginEnum` is used to specify the source of the workflow,
+   * which helps determine which endpoint to call during the Preview & Execution phase.
+   * - 'novu' indicates that the workflow originates from Novu's platform, so the Novu endpoint is used.
+   * - 'external' indicates that the workflow originates from an external source, requiring a call to a customer-hosted Bridge endpoint.
+   */
+  origin?: WorkflowOriginEnum;
 
   rawData?: any;
 
@@ -129,7 +139,10 @@ export class StepVariantEntity implements IStepVariant {
   shouldStopOnFail?: boolean;
 
   bridgeUrl?: string;
-
+  /**
+   * Control variables for the step
+   * Same as ControlValues
+   */
   controlVariables?: ControlsDto;
 
   controls?: {

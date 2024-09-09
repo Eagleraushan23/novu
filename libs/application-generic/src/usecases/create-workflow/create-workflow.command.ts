@@ -13,12 +13,13 @@ import {
   BuilderFieldType,
   BuilderGroupValues,
   ChannelCTATypeEnum,
-  IMessageAction,
-  IPreferenceChannels,
   FilterParts,
+  IMessageAction,
+  INotificationGroup,
+  IPreferenceChannels,
   IWorkflowStepMetadata,
   NotificationTemplateCustomData,
-  INotificationGroup,
+  WorkflowOriginEnum,
   WorkflowTypeEnum,
 } from '@novu/shared';
 
@@ -35,7 +36,7 @@ export class CreateWorkflowCommand extends EnvironmentWithUserCommand {
 
   @IsOptional()
   @IsArray()
-  tags: string[];
+  tags?: string[];
 
   @IsDefined()
   @IsString()
@@ -43,7 +44,7 @@ export class CreateWorkflowCommand extends EnvironmentWithUserCommand {
 
   @IsString()
   @IsOptional()
-  description: string;
+  description?: string;
 
   @IsDefined()
   @IsArray()
@@ -90,6 +91,16 @@ export class CreateWorkflowCommand extends EnvironmentWithUserCommand {
   @IsEnum(WorkflowTypeEnum)
   @IsDefined()
   type: WorkflowTypeEnum;
+
+  /**
+   * Enum to define the origin of the workflow.
+   *
+   * The `WorkflowOriginEnum` is used to specify the source of the workflow,
+   * which helps determine which endpoint to call during the Preview & Execution phase.
+   * - 'novu' indicates that the workflow originates from Novu's platform, so the Novu endpoint is used.
+   * - 'external' indicates that the workflow originates from an external source, requiring a call to a customer-hosted Bridge endpoint.
+   */
+  origin: WorkflowOriginEnum;
 }
 
 export class ChannelCTACommand {
