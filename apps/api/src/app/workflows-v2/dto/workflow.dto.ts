@@ -2,7 +2,7 @@ import { IsArray, IsBoolean, IsDefined, IsEnum, IsObject, IsOptional, IsString, 
 import { Type } from 'class-transformer';
 
 import { JsonSchema } from '@novu/framework';
-import { StepTypeEnum, WorkflowChannelPreferences, WorkflowOriginEnum } from '@novu/shared';
+import { StepTypeEnum, WorkflowOriginEnum, WorkflowPreferences } from '@novu/shared';
 import { RequiredProp } from '../customTypes';
 
 class ControlsSchema {
@@ -88,7 +88,7 @@ export class WorkflowDto {
   notificationGroupId: string;
   @IsOptional()
   @IsDefined()
-  preferences?: WorkflowChannelPreferences;
+  preferences?: WorkflowPreferences;
 
   @IsArray()
   @ValidateNested({ each: true })

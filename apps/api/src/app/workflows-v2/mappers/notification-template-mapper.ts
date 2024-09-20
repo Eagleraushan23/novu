@@ -1,5 +1,4 @@
-import { IPreferenceChannels, StepTypeEnum, WorkflowChannelPreferences, WorkflowOriginEnum } from '@novu/shared';
-import { DiscoverWorkflowOutputPreferences } from '@novu/framework';
+import { StepTypeEnum, WorkflowOriginEnum, WorkflowPreferences } from '@novu/shared';
 import { NotificationStepEntity, NotificationTemplateEntity } from '@novu/dal';
 
 import { ControlValuesEntity } from '@novu/dal/src';
@@ -8,7 +7,7 @@ import { MinifiedResponseWorkflowDto, StepResponseDto, WorkflowResponseDto } fro
 export class NotificationTemplateMapper {
   static toResponseWorkflowDto(
     template: NotificationTemplateEntity,
-    preferences: WorkflowChannelPreferences | undefined,
+    preferences: WorkflowPreferences | undefined,
     stepIdToControlValuesMap: { [p: string]: ControlValuesEntity }
   ): WorkflowResponseDto {
     return {
@@ -74,25 +73,6 @@ export class NotificationTemplateMapper {
     } else {
       return undefined;
     }
-  }
-
-  private static toPreferences(preferenceSettings: IPreferenceChannels): DiscoverWorkflowOutputPreferences {
-    const { email } = preferenceSettings;
-    const { sms } = preferenceSettings;
-    const { push } = preferenceSettings;
-    const { chat } = preferenceSettings;
-    const inApp = preferenceSettings.in_app;
-
-    return {
-      workflow: { defaultValue: true, readOnly: false },
-      channels: {
-        email: { defaultValue: email ?? true, readOnly: false },
-        sms: { defaultValue: sms ?? true, readOnly: false },
-        push: { defaultValue: push ?? true, readOnly: false },
-        chat: { defaultValue: chat ?? true, readOnly: false },
-        in_app: { defaultValue: inApp ?? true, readOnly: false },
-      },
-    };
   }
 
   private static buildStepSummery(step: NotificationStepEntity) {
